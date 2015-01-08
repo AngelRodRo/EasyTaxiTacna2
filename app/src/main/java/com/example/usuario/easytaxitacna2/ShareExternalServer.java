@@ -17,25 +17,19 @@ public class ShareExternalServer {
 	public String shareRegIdWithAppServer(final Context context,
 			final String regId) {
 
-        JSONArray values = new JSONArray();
-        values.put("user1");
+        JSONObject jsonSubscribe = new JSONObject();
 
-
-        JSONObject json = new JSONObject();
-
-          try {
-            json.put("user","user3");
-            json.put("type","android");
-            json.put("token",regId);
-
+        try {
+            jsonSubscribe.put("user","user3");
+            jsonSubscribe.put("type","android");
+            jsonSubscribe.put("token",regId);
         }catch (Exception e)
-        {}
-
-
+        {
+            Log.e("JSONError","Error en envio de JSON para suscribir");
+        }
 
         String result = "";
-		//Map<String, String> paramsMap = new HashMap<String, String>();
-		//paramsMap.put("regId", regId);
+
 		try {
 			URL serverUrl = null;
 			try {
@@ -46,12 +40,9 @@ public class ShareExternalServer {
 				result = "Invalid URL: " + Config.APP_SERVER_URL;
 			}
 
-			//}
-			//String body = postBody.toString();
-            byte[] bytes =  json.toString().getBytes();
 
 
-			//byte[] bytes = body.getBytes();
+            byte[] bytes =  jsonSubscribe.toString().getBytes();
 			HttpURLConnection httpCon = null;
 			try {
 				httpCon = (HttpURLConnection) serverUrl.openConnection();
