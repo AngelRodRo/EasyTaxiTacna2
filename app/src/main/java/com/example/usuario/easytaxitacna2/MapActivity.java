@@ -1,12 +1,20 @@
 package com.example.usuario.easytaxitacna2;
 
+import android.content.Intent;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,16 +29,27 @@ import java.net.URL;
 public class MapActivity extends ActionBarActivity {
 
     AsyncTask<Void, Void, String> shareRegidTask;
+    //Añadiendo nuevo mapa de Google Maps
+    GoogleMap map;
+    Location location;
+
+    String SERVER_URL = "https://aqueous-escarpment-1930.herokuapp.com/SEND";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        getGoogleMap();
+    }
+
+    public void SendMessage(final String message){
+
 
         shareRegidTask = new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
-                String result = SendServerMessage();
+                String result = SendServerMessage(message);
                 return result;
             }
 
@@ -46,10 +65,7 @@ public class MapActivity extends ActionBarActivity {
     }
 
 
-    public String SendServerMessage(){
-
-        String SERVER_URL = "https://aqueous-escarpment-1930.herokuapp.com/SEND";
-
+    public String SendServerMessage(String message){
 
         JSONArray values = new JSONArray();
         values.put("user1");
@@ -62,7 +78,7 @@ public class MapActivity extends ActionBarActivity {
         JSONObject iosjs = new JSONObject();
 
         try {
-            datajs.put("message", "Este es mi mensaje :D");
+            datajs.put("message", message);
 
             androidjs.put("collapseKey", "optional");
             androidjs.put("data", datajs);
@@ -78,9 +94,9 @@ public class MapActivity extends ActionBarActivity {
         }
         catch (Exception e){
 
+            Toast.makeText(getApplicationContext(),"Error al crear mensaje JSON", Toast.LENGTH_LONG).show();
+
         }
-
-
 
         String result = "";
 
@@ -112,7 +128,7 @@ public class MapActivity extends ActionBarActivity {
                 out.close();
 
                 int status = httpCon.getResponseCode();
-                if (status == httpCon.HTTP_OK) {
+                if (status == httpCon.HTTP_OK){
                     result = "RegId shared with Application Server. RegId: "
                            ;
                 } else {
@@ -129,6 +145,27 @@ public class MapActivity extends ActionBarActivity {
             Log.e("AppUtil", "Error in sharing with App Server: " + e);
         }
         return result;
+    }
+
+    public void getGoogleMap(){
+        try{
+            if(map==null)
+                map =((MapFragment) getFragmentManager().findFragmentById(R.id.mapView)).getMap(); //Mostrar mapa nuevo
+            map.setMyLocationEnabled(true); //Muestra la localizacion actual
+            map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() { //Detecta cambios de posicion y lo muestra
+                @Override
+                public void onMyLocationChange(Location _location) {
+                    location=_location;
+                    //Enviar localizacion del usuario como string compuesto de altitud y latitud
+                    String message = Double.toString(_location.getAltitude()) + " "  +Double.toString(_location.getLatitude()) ;
+                    SendMessage(message);
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getApplicationContext(),"No se pudo obtener mapa",Toast.LENGTH_LONG).show();
+        }
     }
 
 
