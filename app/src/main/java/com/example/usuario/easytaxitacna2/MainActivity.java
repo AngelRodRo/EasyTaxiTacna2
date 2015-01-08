@@ -47,13 +47,10 @@ public class MainActivity extends ActionBarActivity {
             regId = registerGCM();
             Log.d("RegisterActivity", "GCM RegId: " + regId);
         } else {
-            Toast.makeText(getApplicationContext(),
-                    "Already Registered with GCM Server!",
-                    Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"Already Registered with GCM Server!",Toast.LENGTH_LONG).show();
         }
         if (TextUtils.isEmpty(regId)) {
-            Toast.makeText(getApplicationContext(), "RegId is empty!",
-                    Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "RegId is empty!",Toast.LENGTH_LONG).show();
         } else {
             shareRegidTask = new AsyncTask<Void, Void, String>() {
                 @Override
@@ -65,8 +62,7 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 protected void onPostExecute(String result) {
                     shareRegidTask = null;
-                    Toast.makeText(getApplicationContext(), result,
-                            Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), result,Toast.LENGTH_LONG).show();
                 }
 
             };
@@ -99,9 +95,7 @@ public class MainActivity extends ActionBarActivity {
                     "registerGCM - successfully registered with GCM server - regId: "
                             + regId);
         } else {
-            Toast.makeText(getApplicationContext(),
-                    "RegId already available. RegId: " + regId,
-                    Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"RegId already available. RegId: " + regId,Toast.LENGTH_LONG).show();
         }
         return regId;
     }
@@ -160,9 +154,7 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             protected void onPostExecute(String msg) {
-                Toast.makeText(getApplicationContext(),
-                        "Registered with GCM Server." + msg, Toast.LENGTH_LONG)
-                        .show();
+               // Toast.makeText(getApplicationContext(), "Registered with GCM Server." + msg, Toast.LENGTH_LONG).show();
             }
         }.execute(null, null, null);
     }
